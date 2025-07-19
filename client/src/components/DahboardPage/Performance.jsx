@@ -4,18 +4,8 @@ import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 import {
   TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Activity,
-  Users,
   BarChart3,
-  PieChart,
-  Target,
-  Wallet,
-  ArrowUpRight,
-  ArrowDownRight,
   Star,
-  Eye,
 } from "lucide-react";
 
 const Performance = () => {

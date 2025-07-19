@@ -4,7 +4,6 @@ import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import {
   TrendingUp,
-  TrendingDown,
   IndianRupee,
   Activity,
   Target,
