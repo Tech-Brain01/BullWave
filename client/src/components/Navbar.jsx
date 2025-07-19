@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, TrendingUp, Shield, Users, Settings } from "lucide-react";
+import {
+  Menu,
+  X,
+  TrendingUp,
+  History,
+  Users,
+  Settings,
+  BarChart3,
+  Wallet,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/Button";
 
@@ -9,10 +18,12 @@ const Navbar = () => {
   const location = useLocation();
 
   const navItems = [
-    { name: "Trading", href: "/trading", icon: TrendingUp },
-    { name: "Portfolio", href: "/portfolio", icon: Shield },
-    { name: "Community", href: "/community", icon: Users },
+    { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+    { name: "Portfolio", href: "/portfolio", icon: TrendingUp },
+    { name: "Transactions", href: "/transactions", icon: History },
+    { name: "Wallet", href: "/wallet", icon: Wallet },
     { name: "Settings", href: "/settings", icon: Settings },
+    { name: "Community", href: "/community", icon: Users },
   ];
 
   const isActive = (path) => location.pathname === path;
