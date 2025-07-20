@@ -4,28 +4,13 @@ import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import {
   Wallet as WalletIcon,
-  CreditCard,
-  Banknote,
   TrendingUp,
   ArrowUpRight,
-  ArrowDownLeft,
-  Plus,
-  Minus,
   RefreshCw,
-  Shield,
-  Lock,
   Eye,
   EyeOff,
   Settings,
   Bell,
-  History,
-  Send,
-  Download,
-  DollarSign,
-  PiggyBank,
-  Target,
-  AlertTriangle,
-  Wallet,
   IndianRupee,
 } from "lucide-react";
 import Section from "./Section";
