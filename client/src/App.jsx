@@ -8,6 +8,12 @@ import Transactions from './pages/Transactions'
 import Wallet from './pages/Wallet'
 import SignUp from './components/SignUp'
 import SignIn from './components/signIn'
+import Market from './pages/Market'
+import StockDetails from './components/MarketPage/StockDetails'
+import Stocks from './components/MarketPage/Stocks'
+import TopGainer from './components/MarketPage/TopGainer'
+import TopLoser from './components/MarketPage/TopLoser'
+
  
 
 
@@ -23,10 +29,15 @@ function App() {
         <Route path="/wallet" element={<Wallet />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
-        
-        
-      </Routes>
+        <Route path="/market" element={<Market />} />
+        <Route path="/market/:symbol" element={<StockDetails />} />
+        <Route path="/stocks" element={<Stocks />} />
+       <Route path="/top-gainers" element={<TopGainer isFullPage={true} />} />
+       <Route path="/top-losers" element={<TopLoser isFullPage={true} />} />
+
       
+      </Routes>
+    
     </Router>
   )
 }

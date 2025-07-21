@@ -20,8 +20,8 @@ const Navbar = () => {
 
    const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: TrendingUp },
-    { name: "Markets", href: "/stock-market", icon: Shield },
-    { name: "Portfolio", href: "/portfolio-dashboard", icon: Users },
+    { name: "Markets", href: "/market", icon: Shield },
+    { name: "Portfolio", href: "/portfolio", icon: Users },
     { name: "Trading", href: "/trading", icon: Users },
     { name: "Wallet", href: "/wallet", icon: Wallet },
     { name: "Settings", href: "/settings", icon: Settings },
