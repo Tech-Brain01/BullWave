@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard'
 import Portfolio from './pages/Portfolio'
 import Transactions from './pages/Transactions'
 import Wallet from './pages/Wallet'
+import SignUp from './components/SignUp'
+import SignIn from './components/signIn'
  
 
 
@@ -19,6 +21,9 @@ function App() {
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/wallet" element={<Wallet />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+        
         
       </Routes>
       

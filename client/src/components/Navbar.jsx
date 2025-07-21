@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
+  Shield,
   Menu,
   X,
   TrendingUp,
@@ -17,13 +18,13 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
-  const navItems = [
-    { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
-    { name: "Portfolio", href: "/portfolio", icon: TrendingUp },
-    { name: "Transactions", href: "/transactions", icon: History },
+   const navItems = [
+    { name: "Dashboard", href: "/dashboard", icon: TrendingUp },
+    { name: "Markets", href: "/stock-market", icon: Shield },
+    { name: "Portfolio", href: "/portfolio-dashboard", icon: Users },
+    { name: "Trading", href: "/trading", icon: Users },
     { name: "Wallet", href: "/wallet", icon: Wallet },
     { name: "Settings", href: "/settings", icon: Settings },
-    { name: "Community", href: "/community", icon: Users },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -61,11 +62,11 @@ const Navbar = () => {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              Sign In
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/signin">Sign In</Link>
             </Button>
-            <Button variant="premium" size="sm">
-              Get Started
+            <Button asChild variant="premium" size="sm">
+              <Link to="/signup">Get Started</Link>
             </Button>
           </div>
 
