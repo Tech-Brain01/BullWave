@@ -1,0 +1,38 @@
+const {Schema} = require('mongoose');
+
+const TransactionSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+
+  tickerSymbol: {
+    type: String,
+    required: true,
+    uppercase: true,
+  },
+
+  transactionType: {
+    type: String,
+    enum: ['BUY', 'SELL'],
+    required: true,
+  },
+
+  quantity: {
+    type: Number,
+    required: true,
+    min: [0.00001, 'Transaction quantity must be positive.'], 
+  },
+
+  price: {
+    type: Number,
+    required: true,
+  },
+
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+module.exports = {TransactionSchema};
