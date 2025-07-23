@@ -1,5 +1,7 @@
-import { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import UserAvatar from "./UserAvatar";
 import {
   Shield,
   Menu,
@@ -17,17 +19,18 @@ import { Button } from "./ui/Button";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { isAuthenticated } = useContext(AuthContext);
 
-   const navItems = [
+  const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: TrendingUp },
     { name: "Markets", href: "/market", icon: Shield },
     { name: "Portfolio", href: "/portfolio", icon: Users },
-    { name: "Trading", href: "/trading", icon: Users },
+    { name: "Transactions", href: "/transactions", icon: History },
     { name: "Wallet", href: "/wallet", icon: Wallet },
-    { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   const isActive = (path) => location.pathname === path;
+
   return (
     <nav className="fixed z-50 top-0 w-full bg-card/80 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,30 +47,37 @@ const Navbar = () => {
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex space-x-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex items-center space-x-2 transition-colors duration-300 ${
-                  location.pathname === item.href
-                    ? "text-primary font-medium"
-                    : "text-muted-foreground hover:text-primary"
-                }`}
-              >
-                <item.icon className="w-4 h-4" />
-                <span className="font-medium">{item.name}</span>
-              </Link>
-            ))}
+            {isAuthenticated &&
+              navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center space-x-2 transition-colors duration-300 ${
+                    location.pathname === item.href
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground hover:text-primary"
+                  }`}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span className="font-medium">{item.name}</span>
+                </Link>
+              ))}
           </div>
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/signin">Sign In</Link>
-            </Button>
-            <Button asChild variant="premium" size="sm">
-              <Link to="/signup">Get Started</Link>
-            </Button>
+            {isAuthenticated ? (
+              <UserAvatar />
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/signin">Sign In</Link>
+                </Button>
+                <Button asChild variant="premium" size="sm">
+                  <Link to="/signup">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -113,12 +123,18 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="pt-4 space-y-3">
-                <Button variant="ghost" className="w-full justify-start">
-                  Sign In
-                </Button>
-                <Button variant="premium" className="w-full">
-                  Get Started
-                </Button>
+                {isAuthenticated ? (
+                  <UserAvatar />
+                ) : (
+                  <>
+                    <Button variant="ghost" className="w-full justify-start">
+                      Sign In
+                    </Button>
+                    <Button variant="premium" className="w-full">
+                      Get Started
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

@@ -13,38 +13,44 @@ import {
 import Performance from "./Performance";
 import Activities from "./Activities";
 
-const Hero = ({ user }) => {
+const Hero = ({ user , data }) => {
   const [timeframe, setTimeframe] = useState("24h");
+
+// Create dynamic stats from the fetched data
+  // The 'data?' is optional chaining, which prevents errors if data is null
+  const totalPortfolioValue = data?.portfolio?.holdings.reduce((acc, holding) => acc + (holding.quantity * holding.currentPrice), 0) || 0;
+  const activePositions = data?.portfolio?.holdings.length || 0;
 
   const stats = [
     {
       title: "Total Portfolio Value",
-      value: "₹38,47,250",
-      change: "+12.5%",
+      // Format the number to look like currency
+      value: `₹${totalPortfolioValue.toLocaleString('en-IN')}`,
+      change: "+0.0%", // You would calculate this based on more detailed data
       trend: "up",
       icon: IndianRupee,
       color: "text-success",
     },
     {
       title: "Active Positions",
-      value: "18",
-      change: "+2",
+      value: activePositions,
+      change: "",
       trend: "up",
       icon: Activity,
       color: "text-primary",
     },
     {
       title: "P&L Today",
-      value: "+₹98,400",
-      change: "+8.3%",
+      value: "+₹0.00", // This requires real-time price change data
+      change: "+0.0%",
       trend: "up",
       icon: TrendingUp,
       color: "text-success",
     },
     {
       title: "Win Rate",
-      value: "72.4%",
-      change: "+2.8%",
+      value: "N/A", // This would be a more complex calculation
+      change: "",
       trend: "up",
       icon: Target,
       color: "text-accent",
@@ -67,7 +73,7 @@ const Hero = ({ user }) => {
                   Dashboard
                 </h1>
                 <p className="text-muted-foreground">
-                  Welcome back, {user ? user.username : 'Guest'}! Here's your trading overview.
+                  Welcome back, {user?.username || 'Trader'}! Here's your trading overview.
                 </p>
               </div>
               <div className="flex gap-2 mt-4 sm:mt-0">
@@ -125,8 +131,8 @@ const Hero = ({ user }) => {
             ))}
           </motion.div>
 
-          <Performance />
-          <Activities />
+          <Performance portfolio={data?.portfolio} />
+          <Activities transactions={data?.transactions} />
         </div>
       </div>
     </div>

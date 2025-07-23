@@ -12,8 +12,19 @@ module.exports.userVerification = async (req, res) => {
       return res.json({ status: false });
     } else {
       const user = await User.findById(data.id);
-      if (user) return res.json({ status: true, user: user.username });
-      else return res.json({ status: false });
+      if (user) {
+        // FIX: Send back the essential user data, not just the username
+        return res.json({ 
+          status: true, 
+          user: {
+            id: user._id,
+            username: user.username,
+            email: user.email
+          } 
+        });
+      } else {
+        return res.json({ status: false });
+      }
     }
   });
 };

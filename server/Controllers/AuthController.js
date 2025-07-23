@@ -42,8 +42,16 @@ module.exports.Login = async (req, res, next) => {
             withCredentials: true,
             httpOnly: true, 
         });
-        res.status(201).json({ message: "User logged in successfully.", success: true });
-        next();
+        res.status(200).json({ 
+            message: "User logged in successfully.", 
+            success: true, 
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+               
+            }
+        });
     } catch (error) {
         res.status(500).json({ error: "Server error during login.", details: error.message });
     }

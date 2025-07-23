@@ -52,13 +52,15 @@ const SignIn = () => {
       const { success, message, user } = data;
       if (success && user) {
         handleSuccess(message);
-        login({ username: user.username }); // Now this is safe to call
+        // FIX: Pass the entire user object to the login context
+        login(user); 
+        
+        // Redirect to the dashboard
         setTimeout(() => {
           navigate('/dashboard');
         }, 1000);
       } else {
-        // This will now handle failed logins gracefully
-        handleError(message || "Invalid credentials. Please try again.");
+        handleError(message || "Invalid credentials.");
       }
     } catch (error) {
       console.log(error);
