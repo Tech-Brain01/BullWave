@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 // CORRECTED: Destructuring the imports to get the actual models
-const { User } = require('../model/User');
-const { Portfolio } = require('../model/Portfolio');
-const { Transaction } = require('../model/Transaction');
-const { StockMetadata } = require('../model/Metadata');
+const  User  = require('../model/User');
+const  Portfolio  = require('../model/Portfolio');
+const  Transaction  = require('../model/Transaction');
+const  StockMetadata  = require('../model/Metadata');
 
 /**
  * @route   GET /api/seed/database

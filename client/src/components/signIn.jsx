@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link , useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, TrendingUp, PieChart, BarChart3, IndianRupee, CreditCard, Wallet } from "lucide-react";
 import { Button } from "../components/ui/Button";
@@ -10,6 +12,59 @@ import { Checkbox } from "../components/ui/CheckBox";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const [inputValue, setInputValue] = useState({
+    email: "",
+    password: "",
+  });
+  const { email, password } = inputValue;
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
+  };
+
+  const handleError = (err) =>
+    toast.error(err, {
+      position: "bottom-left",
+    });
+  const handleSuccess = (msg) =>
+    toast.success(msg, {
+      position: "bottom-left",
+    });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        "http://localhost:3001/login",
+        {
+          ...inputValue,
+        },
+        { withCredentials: true }
+      );
+      console.log(data);
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        handleError(message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setInputValue({
+      ...inputValue,
+      email: "",
+      password: "",
+    });
+  };
 
   // Finance-themed floating elements with animations
   const financeElements = [
@@ -193,7 +248,7 @@ const SignIn = () => {
                   </p>
                 </div>
 
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -201,6 +256,9 @@ const SignIn = () => {
                       type="email"
                       placeholder="Enter your email"
                       className="bg-background/50"
+                      name="email"
+                      value={email}
+                      onChange={handleOnChange}
                     />
                   </div>
 
@@ -212,6 +270,9 @@ const SignIn = () => {
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your password"
                         className="bg-background/50 pr-10"
+                        name="password"
+                        value={password}
+                        onChange={handleOnChange}
                       />
                       <button
                         type="button"
@@ -246,7 +307,9 @@ const SignIn = () => {
                     Sign In
                   </Button>
                 </form>
+                <ToastContainer />
 
+          
                 <div className="text-center">
                   <p className="text-muted-foreground">
                     Don't have an account?{" "}

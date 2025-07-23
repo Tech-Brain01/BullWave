@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import React,  { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 import { motion } from "framer-motion";
 import {
   Eye,
@@ -20,6 +22,60 @@ import { Checkbox } from "../components/ui/CheckBox";
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState({
+    email: "",
+    password: "",
+    username: "",
+  });
+
+  const { email, password, username } = inputValue;
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
+  };
+
+  const handleError = (err) =>
+    toast.error(err, {
+      position: "bottom-left",
+    });
+  const handleSuccess = (msg) =>
+    toast.success(msg, {
+      position: "bottom-right",
+    });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        "http://localhost:3001/signup",
+        {
+          ...inputValue,
+        },
+        { withCredentials: true }
+      );
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        handleError(message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setInputValue({
+      ...inputValue,
+      email: "",
+      password: "",
+      username: "",
+    });
+  };
 
   const financeElements = [
     { Icon: TrendingUp, delay: 0, x: 450, y: 50 },
@@ -201,7 +257,7 @@ const SignUp = () => {
                     Start your trading journey in minutes
                   </p>
                 </div>
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
@@ -209,6 +265,10 @@ const SignUp = () => {
                         id="firstName"
                         placeholder="John"
                         className="bg-background/50"
+                        type="text"
+                        name="username"
+                        value={username}
+                        onChange={handleOnChange}
                       />
                     </div>
                     <div className="space-y-2">
@@ -217,6 +277,10 @@ const SignUp = () => {
                         id="lastName"
                         placeholder="Doe"
                         className="bg-background/50"
+                        type="text"
+                        name="lastName"
+                        value={lastName}
+                        onChange={handleOnChange}
                       />
                     </div>
                   </div>
@@ -227,6 +291,9 @@ const SignUp = () => {
                       type="email"
                       placeholder="john@example.com"
                       className="bg-background/50"
+                      name="email"
+                      value={email}
+                      onChange={handleOnChange}
                     />
                   </div>
                   <div className="space-y-2">
@@ -237,6 +304,9 @@ const SignUp = () => {
                         type={showPassword ? "text" : "password"}
                         placeholder="Create a strong password"
                         className="bg-background/50 pr-10"
+                        name="password"
+                        value={password}
+                        onChange={handleOnChange}
                       />
                       <button
                         type="button"
@@ -260,6 +330,9 @@ const SignUp = () => {
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="Confirm your password"
                         className="bg-background/50 pr-10"
+                        name="confirmPassword"
+                        value={confirmPassword}
+                        onChange={handleOnChange}
                       />
                       <button
                         type="button"
@@ -293,6 +366,7 @@ const SignUp = () => {
                     Create Account
                   </Button>
                 </form>
+                <ToastContainer/>
                 <div className="text-center">
                   <p className="text-muted-foreground">
                     Already have an account?{" "}

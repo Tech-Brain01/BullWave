@@ -1,7 +1,39 @@
-const {model} = require('mongoose');
+const mongoose = require('mongoose');
 
-const {TransactionSchema} = require('../schemas/Transaction');    
+const TransactionSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 
-const Transaction = model('Transaction', TransactionSchema);
+  tickerSymbol: {
+    type: String,
+    required: true,
+    uppercase: true,
+  },
 
-module.exports = {Transaction};
+  transactionType: {
+    type: String,
+    enum: ['BUY', 'SELL'],
+    required: true,
+  },
+
+  quantity: {
+    type: Number,
+    required: true,
+    min: [0.00001, 'Transaction quantity must be positive.'], 
+  },
+
+  price: {
+    type: Number,
+    required: true,
+  },
+
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+module.exports = mongoose.model('Transaction', TransactionSchema);

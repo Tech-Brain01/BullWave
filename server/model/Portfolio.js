@@ -1,6 +1,27 @@
-const {model} = require('mongoose');
-const {PortfolioSchema} = require('../schemas/PortfolioSchema');
+const mongoose = require('mongoose');
 
-const Portfolio = model('holding', PortfolioSchema);
+const PortfolioSchema = new mongoose.Schema({
+    // CORRECTED: Changed 'userID' to the standard 'userId' (camelCase)
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    holdings: [{
+        tickerSymbol: {
+            type: String,
+            required: true,
+            uppercase: true
+        },
+        quantity: {
+            type: Number,
+            required: true
+        },
+        averageBuyPrice: {
+            type: Number,
+            required: true
+        },
+    }]
+});
 
-module.exports = {Portfolio};
+module.exports = mongoose.model('Portfolio', PortfolioSchema);
