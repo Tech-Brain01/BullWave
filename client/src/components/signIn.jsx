@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link , useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { AuthContext } from '../context/AuthContext';
 import { motion } from "framer-motion";
 import { Eye, EyeOff, TrendingUp, PieChart, BarChart3, IndianRupee, CreditCard, Wallet } from "lucide-react";
 import { Button } from "../components/ui/Button";
@@ -13,12 +14,16 @@ import { Checkbox } from "../components/ui/CheckBox";
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const [inputValue, setInputValue] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
+
+  // FIX: Destructure email and password from the state object
   const { email, password } = inputValue;
+
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -40,30 +45,25 @@ const SignIn = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:3001/login",
-        {
-          ...inputValue,
-        },
+        'http://localhost:3001/login',
+        { ...inputValue },
         { withCredentials: true }
       );
-      console.log(data);
-      const { success, message } = data;
-      if (success) {
+      const { success, message, user } = data;
+      if (success && user) {
         handleSuccess(message);
+        login({ username: user.username }); // Now this is safe to call
         setTimeout(() => {
-          navigate("/");
+          navigate('/dashboard');
         }, 1000);
       } else {
-        handleError(message);
+        // This will now handle failed logins gracefully
+        handleError(message || "Invalid credentials. Please try again.");
       }
     } catch (error) {
       console.log(error);
+      handleError("An error occurred. Please try again later.");
     }
-    setInputValue({
-      ...inputValue,
-      email: "",
-      password: "",
-    });
   };
 
   // Finance-themed floating elements with animations

@@ -45,7 +45,7 @@ app.use("/", authRoute);
 
 // 1. Seeding Route
 
-//  app.use('/api/seed', require('./routes/seed'));
+ app.use('/api/seed', require('./routes/seed'));
 
 // 2. Data-Fetching Routes for Application
 

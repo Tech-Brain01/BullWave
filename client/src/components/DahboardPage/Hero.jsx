@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
@@ -13,7 +13,7 @@ import {
 import Performance from "./Performance";
 import Activities from "./Activities";
 
-const Hero = () => {
+const Hero = ({ user }) => {
   const [timeframe, setTimeframe] = useState("24h");
 
   const stats = [
@@ -67,7 +67,7 @@ const Hero = () => {
                   Dashboard
                 </h1>
                 <p className="text-muted-foreground">
-                  Welcome back Amrendera! Here's your trading overview
+                  Welcome back, {user ? user.username : 'Guest'}! Here's your trading overview.
                 </p>
               </div>
               <div className="flex gap-2 mt-4 sm:mt-0">

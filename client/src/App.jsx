@@ -13,7 +13,7 @@ import StockDetails from './components/MarketPage/StockDetails'
 import Stocks from './components/MarketPage/Stocks'
 import TopGainer from './components/MarketPage/TopGainer'
 import TopLoser from './components/MarketPage/TopLoser'
-
+import ProtectedRoute from './components/ProtectedRoute';
  
 
 
@@ -35,6 +35,13 @@ function App() {
        <Route path="/top-gainers" element={<TopGainer isFullPage={true} />} />
        <Route path="/top-losers" element={<TopLoser isFullPage={true} />} />
 
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/wallet" element={<Wallet />} />
+        </Route>
       
       </Routes>
     

@@ -1,16 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 // CORRECTED: Destructuring the imports to get the actual models
 const  User  = require('../model/User');
 const  Portfolio  = require('../model/Portfolio');
 const  Transaction  = require('../model/Transaction');
 const  StockMetadata  = require('../model/Metadata');
 
-/**
- * @route   GET /api/seed/database
- * @desc    Resets and seeds the entire database with test data.
- * @access  Public (for development purposes only)
- */
+
 router.get('/database', async (req, res) => {
   try {
     // === 1. CLEAR ALL EXISTING DATA ===
@@ -33,12 +30,19 @@ router.get('/database', async (req, res) => {
 
     // === 3. SEED USERS ===
     // In a real app, passwords would be hashed with bcryptjs
+    console.log('Seeding users with hashed passwords...');
     const usersToSeed = [
       { username: 'priya_sharma', email: 'priya.sharma@example.com', password: 'password123', walletBalance: 85000 },
       { username: 'rohan_verma', email: 'rohan.verma@example.com', password: 'password456', walletBalance: 150000 }
     ];
-    const createdUsers = await User.insertMany(usersToSeed);
-    console.log('Users seeded.');
+    
+    const createdUsers = [];
+    for (const userData of usersToSeed) {
+      const user = await User.create(userData);
+      createdUsers.push(user);
+    }
+    
+    console.log('Users seeded successfully.');
 
     // === 4. SEED PORTFOLIOS using the new User IDs ===
     const portfoliosToSeed = [
