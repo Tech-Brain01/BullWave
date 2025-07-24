@@ -225,7 +225,7 @@ const Section = ({ hideBalances = false }) => {
                           </div>
                           <div className="text-right">
                             <p className={`font-medium ${transaction.amount >= 0 ? 'text-success' : 'text-destructive'}`}>
-                              {transaction.amount >= 0 ? '+' : ''}${Math.abs(transaction.amount).toLocaleString()}
+                              {transaction.amount >= 0 ? '+' : ''}₹{Math.abs(transaction.amount).toLocaleString()}
                             </p>
                             <p className="text-xs text-muted-foreground capitalize">{transaction.status}</p>
                           </div>

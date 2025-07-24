@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Button } from './ui/Button';
-import { Avatar, AvatarFallback } from './ui/Avatar';
 import { Popover, PopoverTrigger, PopoverContent } from './ui/PopOver';
 import { Settings, LogOut } from 'lucide-react';
 
@@ -26,10 +25,8 @@ const UserAvatar = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="premium" size="sm" className="rounded-full w-10 h-10 p-0">
-          <Avatar>
-            <AvatarFallback>{user ? getInitials(user.username) : 'G'}</AvatarFallback>
-          </Avatar>
+        <Button variant="premium" size="sm" className="rounded-full w-10 h-10 p-0 text-white font-bold">
+          {user ? getInitials(user.username) : 'G'}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-56" align="end" forceMount>

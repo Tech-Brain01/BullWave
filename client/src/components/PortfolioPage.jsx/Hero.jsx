@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
@@ -16,18 +16,25 @@ import {
 import Features from "./Features";
 import Action from "./Action";
 
-const Hero = () => {
+const Hero = ({ user, portfolio }) => {
   const [hideValues, setHideValues] = useState(false);
 
-  const portfolioStats = {
-    totalValue: 48291.5,
-    dayChange: 1247.23,
-    dayChangePercent: 2.67,
-    totalReturn: 12847.33,
-    totalReturnPercent: 36.4,
-    cash: 5420.8,
-  };
+  // Calculate total portfolio value, day change, and total return
+  const totalValue = useMemo(() => {
+    return (
+      portfolio?.holdings?.reduce((acc, holding) => {
+        return acc + holding.quantity * holding.averageBuyPrice;
+      }, 0) || 0
+    );
+  }, [portfolio]);
 
+  // Placeholders for when you integrate a live API
+  const dayChange = 0;
+  const totalReturn = 0;
+
+  const availableCash = portfolio?.cashBalance || user?.walletBalance || 0;
+
+  // Helper functions for formatting (your code here is already perfect)
   const formatValue = (value) => {
     if (hideValues) return "₹ ******";
     return `₹${value.toLocaleString("en-IN", {
@@ -101,11 +108,9 @@ const Hero = () => {
                   Total Portfolio Value
                 </p>
                 <p className="text-2xl font-bold mb-1">
-                  {formatValue(portfolioStats.totalValue)}
+                  {formatValue(totalValue)}
                 </p>
-                <p className="text-sm text-success">
-                  {formatPercent(portfolioStats.dayChangePercent)}
-                </p>
+                <p className="text-sm text-success">{formatPercent(0)}</p>
               </div>
             </Card>
 
@@ -119,11 +124,9 @@ const Hero = () => {
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Day P&L</p>
                 <p className="text-2xl font-bold mb-1">
-                  {formatValue(portfolioStats.dayChange)}
+                  {formatValue(dayChange)}
                 </p>
-                <p className="text-sm text-success">
-                  {formatPercent(portfolioStats.dayChangePercent)}
-                </p>
+                <p className="text-sm text-success">{formatPercent(0)}</p>
               </div>
             </Card>
 
@@ -139,11 +142,9 @@ const Hero = () => {
                   Total Return
                 </p>
                 <p className="text-2xl font-bold mb-1">
-                  {formatValue(portfolioStats.totalReturn)}
+                  {formatValue(totalReturn)}
                 </p>
-                <p className="text-sm text-success">
-                  {formatPercent(portfolioStats.totalReturnPercent)}
-                </p>
+                <p className="text-sm text-success">{formatPercent(0)}</p>
               </div>
             </Card>
             <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
@@ -157,16 +158,15 @@ const Hero = () => {
                   Available Cash
                 </p>
                 <p className="text-2xl font-bold mb-1">
-                  {formatValue(portfolioStats.cash)}
+                  {formatValue(availableCash)}
                 </p>
                 <p className="text-sm text-muted-foreground">Ready to invest</p>
               </div>
             </Card>
           </motion.div>
 
-          <Features hideValues={hideValues} />
+          <Features portfolio={portfolio} hideValues={hideValues} />
           <Action />
-
         </div>
       </div>
     </div>

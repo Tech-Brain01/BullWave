@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
@@ -16,15 +16,18 @@ import Activities from "./Activities";
 const Hero = ({ user , data }) => {
   const [timeframe, setTimeframe] = useState("24h");
 
-// Create dynamic stats from the fetched data
-  // The 'data?' is optional chaining, which prevents errors if data is null
-  const totalPortfolioValue = data?.portfolio?.holdings.reduce((acc, holding) => acc + (holding.quantity * holding.currentPrice), 0) || 0;
-  const activePositions = data?.portfolio?.holdings.length || 0;
+// --- FIX: Calculate total value correctly using useMemo for performance ---
+  const totalPortfolioValue = useMemo(() => {
+    return data?.portfolio?.holdings?.reduce((acc, holding) => {
+        return acc + (holding.quantity * holding.averageBuyPrice);
+    }, 0) || 0;
+  }, [data?.portfolio]);
+
+  const activePositions = data?.portfolio?.holdings?.length || 0;
 
   const stats = [
     {
       title: "Total Portfolio Value",
-      // Format the number to look like currency
       value: `₹${totalPortfolioValue.toLocaleString('en-IN')}`,
       change: "+0.0%", // You would calculate this based on more detailed data
       trend: "up",

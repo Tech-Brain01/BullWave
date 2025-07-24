@@ -16,128 +16,20 @@ import {
   ArrowDownRight,
 } from "lucide-react";
 
-const Features = ({ hideValues = false }) => {
+const Features = ({ portfolio, hideValues = false }) => {
   const [selectedTab, setSelectedTab] = useState("overview");
 
+  const holdings = portfolio?.holdings || [];
+  
+  // Mock allocations data - replace with real data from your API
   const allocations = [
-    {
-      category: "Technology",
-      value: 45.2,
-      amount: 21845.23,
-      color: "bg-primary",
-    },
-    {
-      category: "Healthcare",
-      value: 18.5,
-      amount: 8933.89,
-      color: "bg-success",
-    },
-    { category: "Finance", value: 15.3, amount: 7388.59, color: "bg-accent" },
-    {
-      category: "Consumer",
-      value: 12.8,
-      amount: 6181.31,
-      color: "bg-secondary",
-    },
-    {
-      category: "Energy",
-      value: 8.2,
-      amount: 3962.48,
-      color: "bg-destructive",
-    },
+    { category: "Technology", value: 35, amount: 175000 },
+    { category: "Finance", value: 25, amount: 125000 },
+    { category: "Healthcare", value: 20, amount: 100000 },
+    { category: "Consumer", value: 15, amount: 75000 },
+    { category: "Others", value: 5, amount: 25000 },
   ];
-
-  const holdings = [
-    {
-      symbol: "RELIANCE",
-      name: "Reliance Industries Ltd.",
-      shares: 50,
-      avgPrice: 2650.0,
-      currentPrice: 2847.5,
-      value: 142375.0,
-      dayChange: 3.24,
-      totalReturn: 7.45,
-      allocation: 15.2,
-    },
-    {
-      symbol: "TCS",
-      name: "Tata Consultancy Services",
-      shares: 25,
-      avgPrice: 3100.0,
-      currentPrice: 3248.42,
-      value: 81210.5,
-      dayChange: 5.12,
-      totalReturn: 4.79,
-      allocation: 8.7,
-    },
-    {
-      symbol: "HDFCBANK",
-      name: "HDFC Bank Limited",
-      shares: 75,
-      avgPrice: 1485.0,
-      currentPrice: 1542.65,
-      value: 115698.75,
-      dayChange: -0.73,
-      totalReturn: 3.88,
-      allocation: 12.4,
-    },
-    {
-      symbol: "INFY",
-      name: "Infosys Limited",
-      shares: 100,
-      avgPrice: 1420.0,
-      currentPrice: 1489.33,
-      value: 148933.0,
-      dayChange: 1.89,
-      totalReturn: 4.88,
-      allocation: 15.9,
-    },
-    {
-      symbol: "ITC",
-      name: "ITC Limited",
-      shares: 200,
-      avgPrice: 405.5,
-      currentPrice: 428.9,
-      value: 85780.0,
-      dayChange: 2.45,
-      totalReturn: 5.77,
-      allocation: 9.2,
-    },
-    {
-      symbol: "BHARTIARTL",
-      name: "Bharti Airtel Limited",
-      shares: 60,
-      avgPrice: 1085.0,
-      currentPrice: 1156.8,
-      value: 69408.0,
-      dayChange: 4.67,
-      totalReturn: 6.62,
-      allocation: 7.4,
-    },
-    {
-      symbol: "WIPRO",
-      name: "Wipro Limited",
-      shares: 150,
-      avgPrice: 385.0,
-      currentPrice: 412.3,
-      value: 61845.0,
-      dayChange: 1.25,
-      totalReturn: 7.09,
-      allocation: 6.6,
-    },
-    {
-      symbol: "MARUTI",
-      name: "Maruti Suzuki India Ltd.",
-      shares: 15,
-      avgPrice: 9850.0,
-      currentPrice: 10245.75,
-      value: 153686.25,
-      dayChange: 2.88,
-      totalReturn: 4.02,
-      allocation: 16.4,
-    },
-  ];
-
+ 
   const formatValue = (value) => {
     if (hideValues) return "₹ ******";
     return `₹${value.toLocaleString("en-IN", {
@@ -259,51 +151,59 @@ const Features = ({ hideValues = false }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {holdings.map((holding, index) => (
-                    <tr
-                      key={index}
-                      className="border-b border-border/20 hover:bg-muted/20 transition-colors"
-                    >
-                      <td className="py-4 px-2">
-                        <div>
-                          <p className="font-medium">{holding.symbol}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {holding.name}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="text-right py-4 px-2 font-medium">
-                        {holding.shares}
-                      </td>
-                      <td className="text-right py-4 px-2">
-                        {formatValue(holding.avgPrice)}
-                      </td>
-                      <td className="text-right py-4 px-2">
-                        {formatValue(holding.currentPrice)}
-                      </td>
-                      <td className="text-right py-4 px-2 font-medium">
-                        {formatValue(holding.value)}
-                      </td>
-                      <td
-                        className={`text-right py-4 px-2 ${
-                          holding.dayChange >= 0
-                            ? "text-success"
-                            : "text-destructive"
-                        }`}
+                  {holdings.length > 0 ? (
+                    holdings.map((holding) => (
+                      <tr
+                        key={holding.tickerSymbol}
+                        className="border-b border-border/20 hover:bg-muted/20 transition-colors"
                       >
-                        {formatPercent(holding.dayChange)}
-                      </td>
-                      <td
-                        className={`text-right py-4 px-2 ${
-                          holding.totalReturn >= 0
-                            ? "text-success"
-                            : "text-destructive"
-                        }`}
-                      >
-                        {formatPercent(holding.totalReturn)}
+                        <td className="py-4 px-2">
+                          <div>
+                            <p className="font-medium">{holding.tickerSymbol}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {holding.companyName}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="text-right py-4 px-2 font-medium">
+                          {holding.quantity}
+                        </td>
+                        <td className="text-right py-4 px-2">
+                          {formatValue(holding.averageBuyPrice)}
+                        </td>
+                        <td className="text-right py-4 px-2">
+                          {formatValue(holding.averageBuyPrice)}
+                        </td>
+                        <td className="text-right py-4 px-2 font-medium">
+                          {formatValue(holding.quantity * holding.averageBuyPrice)}
+                        </td>
+                        <td
+                          className={`text-right py-4 px-2 ${
+                            holding.dayChange >= 0
+                              ? "text-success"
+                              : "text-destructive"
+                          }`}
+                        >
+                          {formatPercent(0)}
+                        </td>
+                        <td
+                          className={`text-right py-4 px-2 ${
+                            holding.totalReturn >= 0
+                              ? "text-success"
+                              : "text-destructive"
+                          }`}
+                        >
+                          {formatPercent(0)}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className="text-center py-8 text-muted-foreground">
+                        No holdings found. Start investing to see your portfolio here.
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

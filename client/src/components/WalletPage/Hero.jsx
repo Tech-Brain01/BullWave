@@ -15,16 +15,19 @@ import {
 } from "lucide-react";
 import Section from "./Section";
 
-const Hero = () => {
+const Hero = ({ user }) => {
   const [hideBalances, setHideBalances] = useState(false);
 
+  // 2. Safely access the walletBalance from the user prop.
+  //    Use the optional chaining `?.` and a fallback `|| 0` to prevent errors
+  //    if the user object is not yet available.
   const walletStats = {
-    totalBalance: 52847.83,
-    availableBalance: 12847.23,
-    investedAmount: 35420.6,
-    pendingTransfers: 4580.0,
-    monthlyGain: 3247.5,
-    monthlyGainPercent: 6.8,
+    totalBalance: user?.walletBalance || 0,
+    availableBalance: user?.walletBalance || 0,
+    investedAmount: 0, // This would be calculated from portfolio data
+    pendingTransfers: 0,
+    monthlyGain: 0,
+    monthlyGainPercent: 0,
   };
 
   const formatValue = (value) => {
@@ -84,7 +87,7 @@ const Hero = () => {
             transition={{ delay: 0.1 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
           >
-            <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
+            <Card key="total-balance"  className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
               <div className="flex items-center justify-between mb-4">
                 <div className="p-2 rounded-lg bg-primary/10">
                   <WalletIcon className="w-5 h-5 text-primary" />
@@ -106,7 +109,7 @@ const Hero = () => {
                 </p>
               </div>
             </Card>
-            <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
+            <Card key="available-cash" className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
               <div className="flex items-center justify-between mb-4">
                 <div className="p-2 rounded-lg bg-success/10">
                   <IndianRupee className="w-5 h-5 text-success" />
@@ -122,7 +125,7 @@ const Hero = () => {
                 <p className="text-sm text-muted-foreground">Ready to invest</p>
               </div>
             </Card>
-            <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
+            <Card key="invested-amount" className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
               <div className="flex items-center justify-between mb-4">
                 <div className="p-2 rounded-lg bg-accent/10">
                   <TrendingUp className="w-5 h-5 text-accent" />
@@ -137,7 +140,7 @@ const Hero = () => {
               </div>
             </Card>
 
-            <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
+            <Card key="pending-transfers" className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:bg-card/80 transition-all duration-300 hover:shadow-glow">
               <div className="flex items-center justify-between mb-4">
                 <div className="p-2 rounded-lg bg-secondary/10">
                   <RefreshCw className="w-5 h-5 text-secondary-foreground" />
