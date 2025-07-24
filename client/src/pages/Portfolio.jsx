@@ -16,11 +16,12 @@ useEffect(() => {
         return;
       }
       try {
-        const res = await axios.get(
-          `http://localhost:3001/api/portfolio/${user.id}`,
+        // Fetch from the same dashboard endpoint
+        const { data } = await axios.get(
+          `http://localhost:3001/dashboard/${user.id}`,
           { withCredentials: true }
         );
-        setPortfolioData(res.data);
+        setPortfolioData(data.portfolio); // We only need the portfolio part here
       } catch (error) {
         toast.error("Could not load portfolio data.", { theme: "dark" });
       } finally {
@@ -34,11 +35,6 @@ useEffect(() => {
     return <div className="flex h-screen items-center justify-center">Loading Portfolio...</div>;
   }
 
-  if (!portfolioData) {
-    return <div className="flex h-screen items-center justify-center">You have no holdings yet.</div>;
-  }
- 
-  // Pass the user and the fetched portfolio data to the Hero component
   return <Hero user={user} portfolio={portfolioData} />;
 };
 

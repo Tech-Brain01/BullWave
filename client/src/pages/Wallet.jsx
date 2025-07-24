@@ -1,16 +1,28 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Hero from '../components/WalletPage/Hero';
 import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 
 const Wallet = () => {
-  // 1. Get the user object from your authentication context.
   const { user } = useContext(AuthContext);
+  const [walletData, setWalletData] = useState(null);
 
-  // 2. Pass the entire user object as a prop to the Hero component.
-  //    If the user is not loaded yet, you can pass null or an empty object.
+  useEffect(() => {
+    const fetchWalletData = async () => {
+      if (!user || !user.id) return;
+      try {
+        const { data } = await axios.get(`http://localhost:3001/dashboard/${user.id}`, { withCredentials: true });
+        setWalletData(data);
+      } catch (error) {
+        console.error("Failed to fetch wallet data:", error);
+      }
+    };
+    fetchWalletData();
+  }, [user]);
+
   return (
     <>
-      <Hero user={user} />
+      <Hero user={user} data={walletData} />
     </>
   );
 };

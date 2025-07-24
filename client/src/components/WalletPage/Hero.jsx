@@ -15,16 +15,16 @@ import {
 } from "lucide-react";
 import Section from "./Section";
 
-const Hero = ({ user }) => {
+const Hero = ({ user, data }) => {
   const [hideBalances, setHideBalances] = useState(false);
 
   // 2. Safely access the walletBalance from the user prop.
   //    Use the optional chaining `?.` and a fallback `|| 0` to prevent errors
   //    if the user object is not yet available.
   const walletStats = {
-    totalBalance: user?.walletBalance || 0,
-    availableBalance: user?.walletBalance || 0,
-    investedAmount: 0, // This would be calculated from portfolio data
+    totalBalance: data?.user?.walletBalance || 0,
+    availableBalance: data?.user?.walletBalance || 0,
+    investedAmount: data?.portfolio?.totalInvestedAmount || 0,
     pendingTransfers: 0,
     monthlyGain: 0,
     monthlyGainPercent: 0,
