@@ -7,8 +7,71 @@ import {
   BarChart3,
   Star,
 } from "lucide-react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie } from 'react-chartjs-2';
 
-const Performance = () => {
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const Performance = ({ portfolio }) => {
+  // --- Chart Data and Options ---
+ const chartData = {
+    labels: portfolio?.holdings?.map(stock => stock.tickerSymbol) || [],
+    datasets: [
+      {
+        label: 'Value',
+        data: portfolio?.holdings?.map(stock => stock.quantity * stock.averageBuyPrice) || [],
+        backgroundColor: [
+          '#3b82f6', // Blue-500
+          '#22c55e', // Green-500
+          '#f97316', // Orange-500
+          '#8b5cf6', // Violet-500
+          '#ef4444', // Red-500
+          '#06b6d4', // Cyan-500
+        ],
+        borderColor: 'hsl(var(--card))',
+        borderWidth: 2,
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: '#E5E7EB', // Tailwind's gray-200 for high visibility
+          font: {
+            size: 12,
+            family: "inherit",
+          },
+          boxWidth: 15,
+          padding: 20,
+        }
+      },
+      tooltip: {
+        backgroundColor: 'hsl(var(--popover))',
+        // --- FINAL STYLE FIX: Explicitly set title color to white ---
+        titleColor: '#FFFFFF', // This ensures the stock name is always bright white
+        bodyColor: 'hsl(var(--popover-foreground))',
+        borderColor: 'hsl(var(--border))',
+        borderWidth: 1,
+        padding: 10,
+        callbacks: {
+          title: function(context) {
+            return context[0].label;
+          },
+          label: function(context) {
+            let value = context.parsed;
+            return `Value: ${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value)}`;
+          }
+        }
+      }
+    }
+  };
+
   const topPerformers = [
     {
       symbol: "RELIANCE",
@@ -58,8 +121,8 @@ const Performance = () => {
       >
         <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold">Portfolio Performance</h3>
-            <div className="flex items-center gap-2">
+            <h3 className="text-xl font-semibold">Portfolio Composition</h3>
+          
               <Badge
                 variant="outline"
                 className="bg-success/10 text-success border-success/20"
@@ -68,14 +131,18 @@ const Performance = () => {
                 +12.5%
               </Badge>
             </div>
-          </div>
-          <div className="h-64 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg flex items-center justify-center border border-border/20">
-            <div className="text-center">
-              <BarChart3 className="w-16 h-16 text-primary/50 mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                Interactive Chart Coming Soon
-              </p>
-            </div>
+          
+           <div className="h-64">
+            {portfolio && portfolio.holdings && portfolio.holdings.length > 0 ? (
+              <Pie data={chartData} options={chartOptions} />
+            ) : (
+               <div className="h-full flex items-center justify-center text-center text-muted-foreground">
+                <div>
+                  <BarChart3 className="w-16 h-16 text-primary/50 mx-auto mb-4" />
+                  <p>No holdings yet. Add stocks to see your portfolio composition.</p>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
       </motion.div>

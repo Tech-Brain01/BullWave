@@ -15,11 +15,25 @@ import {
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
+import PortfolioOverviewChart from "./PortfolioOverviewChart";
+import PortfolioAllocationChart from "./PortfolioAllocationChart";
+
 
 const Features = ({ portfolio, hideValues = false }) => {
   const [selectedTab, setSelectedTab] = useState("overview");
 
   const holdings = portfolio?.holdings || [];
+  // --- MOCK SECTOR DATA (TEMPORARY) ---
+  // Later, your API should return this 'sector' field with each holding
+  const holdingsWithSectors = portfolio?.holdings?.map((holding, index) => ({
+    ...holding,
+    // Assigning sectors for demonstration
+    sector: index % 3 === 0 ? 'Technology' : (index % 3 === 1 ? 'Finance' : 'Consumer Goods'),
+  })) || [];
+
+  // Create a new portfolio object with the updated holdings
+  const portfolioWithSectors = { ...portfolio, holdings: holdingsWithSectors };
+
   
   // Mock allocations data - replace with real data from your API
   const allocations = [
@@ -48,7 +62,7 @@ const Features = ({ portfolio, hideValues = false }) => {
         <TabsTrigger value="allocation">Allocation</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="overview">
+      <TabsContent value="overview" className="mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Performance Chart */}
           <motion.div
@@ -60,12 +74,9 @@ const Features = ({ portfolio, hideValues = false }) => {
               <h3 className="text-xl font-semibold mb-6">
                 Portfolio Performance
               </h3>
-              <div className="h-64 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg flex items-center justify-center border border-border/20">
-                <div className="text-center">
-                  <BarChart3 className="w-16 h-16 text-primary/50 mx-auto mb-4" />
-                  <p className="text-muted-foreground">Performance Chart</p>
-                </div>
-              </div>
+              <div className="h-80">
+              <PortfolioOverviewChart />
+            </div>
             </Card>
           </motion.div>
 
@@ -220,11 +231,12 @@ const Features = ({ portfolio, hideValues = false }) => {
           >
             <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50">
               <h3 className="text-xl font-semibold mb-6">Sector Allocation</h3>
-              <div className="h-64 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg flex items-center justify-center border border-border/20">
-                <div className="text-center">
-                  <PieChart className="w-16 h-16 text-primary/50 mx-auto mb-4" />
-                  <p className="text-muted-foreground">Allocation Chart</p>
-                </div>
+              <div className="h-80">
+                {holdingsWithSectors.length > 0 ? (
+                  <PortfolioAllocationChart portfolio={portfolioWithSectors} />
+                ) : (
+                   <div className="flex items-center justify-center h-full text-muted-foreground">No holdings for allocation view.</div>
+                )}
               </div>
             </Card>
           </motion.div>
