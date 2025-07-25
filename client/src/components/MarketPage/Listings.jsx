@@ -14,70 +14,70 @@ import {
   BarChart3 
 } from "lucide-react";
 
-const Listings = () => {
+const Listings = ({ allStocks, topGainers, topLosers, isConnected }) => {
     
-    const allStocks = [
-    {
-      symbol: "RELIANCE",
-      name: "Reliance Industries Ltd.",
-      price: 2847.65,
-      change: 142.30,
-      changePercent: 5.26,
-      volume: "1.2M",
-      marketCap: "19.23L Cr",
-      sector: "Oil & Gas"
-    },
-    {
-      symbol: "TCS",
-      name: "Tata Consultancy Services",
-      price: 3542.80,
-      change: -45.60,
-      changePercent: -1.26,
-      volume: "865K",
-      marketCap: "12.87L Cr",
-      sector: "IT Services"
-    },
-    {
-      symbol: "HDFCBANK",
-      name: "HDFC Bank Limited",
-      price: 1624.85,
-      change: 67.25,
-      changePercent: 4.32,
-      volume: "2.1M",
-      marketCap: "12.41L Cr",
-      sector: "Banking"
-    },
-    {
-      symbol: "INFY",
-      name: "Infosys Limited",
-      price: 1456.30,
-      change: 23.45,
-      changePercent: 1.64,
-      volume: "1.8M",
-      marketCap: "6.12L Cr",
-      sector: "IT Services"
-    },
-    {
-      symbol: "ICICIBANK",
-      name: "ICICI Bank Limited",
-      price: 1089.75,
-      change: -15.20,
-      changePercent: -1.38,
-      volume: "3.2M",
-      marketCap: "7.65L Cr",
-      sector: "Banking"
-    },
-    {
-      symbol: "BHARTIARTL",
-      name: "Bharti Airtel Limited",
-      price: 1186.40,
-      change: 28.90,
-      changePercent: 2.50,
-      volume: "1.5M",
-      marketCap: "6.78L Cr",
-      sector: "Telecommunications"
-    }
-  ];
+  //   const allStocks = [
+  //   {
+  //     symbol: "RELIANCE",
+  //     name: "Reliance Industries Ltd.",
+  //     price: 2847.65,
+  //     change: 142.30,
+  //     changePercent: 5.26,
+  //     volume: "1.2M",
+  //     marketCap: "19.23L Cr",
+  //     sector: "Oil & Gas"
+  //   },
+  //   {
+  //     symbol: "TCS",
+  //     name: "Tata Consultancy Services",
+  //     price: 3542.80,
+  //     change: -45.60,
+  //     changePercent: -1.26,
+  //     volume: "865K",
+  //     marketCap: "12.87L Cr",
+  //     sector: "IT Services"
+  //   },
+  //   {
+  //     symbol: "HDFCBANK",
+  //     name: "HDFC Bank Limited",
+  //     price: 1624.85,
+  //     change: 67.25,
+  //     changePercent: 4.32,
+  //     volume: "2.1M",
+  //     marketCap: "12.41L Cr",
+  //     sector: "Banking"
+  //   },
+  //   {
+  //     symbol: "INFY",
+  //     name: "Infosys Limited",
+  //     price: 1456.30,
+  //     change: 23.45,
+  //     changePercent: 1.64,
+  //     volume: "1.8M",
+  //     marketCap: "6.12L Cr",
+  //     sector: "IT Services"
+  //   },
+  //   {
+  //     symbol: "ICICIBANK",
+  //     name: "ICICI Bank Limited",
+  //     price: 1089.75,
+  //     change: -15.20,
+  //     changePercent: -1.38,
+  //     volume: "3.2M",
+  //     marketCap: "7.65L Cr",
+  //     sector: "Banking"
+  //   },
+  //   {
+  //     symbol: "BHARTIARTL",
+  //     name: "Bharti Airtel Limited",
+  //     price: 1186.40,
+  //     change: 28.90,
+  //     changePercent: 2.50,
+  //     volume: "1.5M",
+  //     marketCap: "6.78L Cr",
+  //     sector: "Telecommunications"
+  //   }
+  // ];
 
   return (
     <main className="pt-24">
@@ -96,9 +96,11 @@ const Listings = () => {
               </span>
             </h1>
 
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Your complete trading destination with real-time data, market
-              insights, and advanced analytics
+           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Connection Status:
+              <span className={isConnected ? 'text-green-500' : 'text-red-500'}>
+                {isConnected ? ' Live' : ' Disconnected'}
+              </span>
             </p>
           </motion.div>
         </div>
@@ -110,11 +112,11 @@ const Listings = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             {/* Top Gainers Card */}
             <Card className="p-6 bg-gradient-to-br from-green-500/10 to-emerald-600/10 border-green-500/20">
-                 <TopGainer />
+                 <TopGainer gainers={topGainers} />
             </Card>
              {/* Top Losers Card */}
               <Card className="p-6 bg-gradient-to-br from-red-500/10 to-rose-600/10 border-red-500/20">
-                <TopLoser />
+                <TopLoser losers={topLosers} />
               </Card>
           </div>
         </div>
@@ -127,9 +129,10 @@ const Listings = () => {
         {/* stock grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
          <div className="grid gap-4">
-              {allStocks.map((stock, index) => (
+            {allStocks && allStocks.length > 0 ? (
+              allStocks.map((stock, index) => (
                 <motion.div
-                  key={stock.symbol}
+                  key={stock.instrumentKey || index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.05 }}
@@ -140,38 +143,33 @@ const Listings = () => {
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
                           <span className="text-primary-foreground font-bold text-sm">
-                            {stock.symbol.slice(0, 2)}
+                           {stock.symbol ? stock.symbol.slice(0, 2) : 'NA'}
                           </span>
                         </div>
                         
                         <div>
-                          <h3 className="font-bold text-lg">{stock.symbol}</h3>
-                          <p className="text-muted-foreground text-sm">{stock.name}</p>
+                          <h3 className="font-bold text-lg">{stock.symbol || 'Loading...'}</h3>
+                          <p className="text-muted-foreground text-sm">{stock.name || ''}</p>
                           <Badge variant="secondary" className="mt-1">
-                            {stock.sector}
+                            {stock.sector || 'N/A'}
                           </Badge>
                         </div>
                       </div>
                       
                       <div className="text-right space-y-2">
-                        <p className="text-2xl font-bold">₹{stock.price}</p>
-                        <div className={`flex items-center space-x-1 ${
-                          stock.change >= 0 ? 'text-green-500' : 'text-red-500'
-                        }`}>
-                          {stock.change >= 0 ? (
-                            <TrendingUp className="w-4 h-4" />
-                          ) : (
-                            <TrendingDown className="w-4 h-4" />
-                          )}
+                        <p className="text-2xl font-bold">₹{stock.price ? stock.price.toFixed(2) : '0.00'}</p>
+                        <div className={`flex items-center space-x-1 ${stock.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                          {stock.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                           <span className="font-medium">
-                            {stock.change >= 0 ? '+' : ''}{stock.change} ({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent}%)
+                            {stock.change ? `${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}` : '0.00'}
+                            ({stock.changePercent ? `${stock.changePercent >= 0 ? '+' : ''}${stock.changePercent.toFixed(2)}%` : '0.00%'})
                           </span>
                         </div>
                       </div>
                       
                       <div className="hidden md:block text-right space-y-1">
-                        <p className="text-sm text-muted-foreground">Volume: {stock.volume}</p>
-                        <p className="text-sm text-muted-foreground">Market Cap: {stock.marketCap}</p>
+                        <p className="text-sm text-muted-foreground">Volume: {stock.volume || 'N/A'}</p>
+                        <p className="text-sm text-muted-foreground">Market Cap: {stock.marketCap || 'N/A'}</p>
                       </div>
                       
                       <div className="flex items-center space-x-2">
@@ -182,16 +180,17 @@ const Listings = () => {
                           <BarChart3 className="w-4 h-4" />
                         </Button>
                         <Button asChild variant="premium" size="sm">
-                          <Link to={`/market/${stock.symbol.toLowerCase()}`}>
-                            Trade
-                          </Link>
+                           <Link to={`/market/${stock.symbol?.toLowerCase()}`}>Trade</Link>
                         </Button>
                       </div>
                     </div>
                   </Card>
                 </motion.div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <p className="text-center text-muted-foreground py-10">Awaiting live market data from the server...</p>
+            )}
+          </div>
 
             {/* Quick Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">

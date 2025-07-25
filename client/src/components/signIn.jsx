@@ -49,7 +49,7 @@ const SignIn = () => {
         { ...inputValue },
         { withCredentials: true }
       );
-      const { success, message, user } = data;
+      const { success, message, user } = data; // Destructure the user object
       if (success && user) {
         handleSuccess(message);
         // FIX: Pass the entire user object to the login context
@@ -64,9 +64,11 @@ const SignIn = () => {
       }
     } catch (error) {
       console.log(error);
-      handleError("An error occurred. Please try again later.");
+      const errorMessage = error.response?.data?.message || "An error occurred during sign-in.";
+      handleError(errorMessage);
     }
   };
+
 
   // Finance-themed floating elements with animations
   const financeElements = [
