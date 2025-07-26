@@ -186,3 +186,22 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+
+/* Add these animations for the live price flash effect */
+@keyframes flash-green-bg {
+  from { background-color: rgba(6, 182, 212, 0.3); } /* Using success color from NextUI */
+  to { background-color: transparent; }
+}
+
+@keyframes flash-red-bg {
+  from { background-color: rgba(243, 67, 54, 0.3); } /* Using danger color from NextUI */
+  to { background-color: transparent; }
+}
+
+.flash-green {
+  animation: flash-green-bg 1s ease-out;
+}
+
+.flash-red {
+  animation: flash-red-bg 1s ease-out;
+}

@@ -11,54 +11,34 @@ import Wallet from './pages/Wallet';
 import SignUp from './components/SignUp';
 import SignIn from './components/signIn';
 import Market from './pages/Market';
-import ProtectedRoute from './components/ProtectedRoute'; // Import the component
+import ProtectedRoute from './components/ProtectedRoute';
+import Stocks from './components/MarketPage/Stocks';
+import StockDetails from './components/MarketPage/StockDetails';
+import TopGainer from './components/MarketPage/TopGainer';
+import TopLoser from './components/MarketPage/TopLoser';
 
 function App() {
   return (
     <>
       <Navbar />
       <Routes>
-        {/* Public Routes */}
+        {/* --- Public Routes --- */}
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/market" element={<Market />} />
         
-        {/* Protected Routes */}
-        <Route 
-          path="/dashboard" 
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/portfolio" 
-          element={
-            <ProtectedRoute>
-              <Portfolio />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/transactions" 
-          element={
-            <ProtectedRoute>
-              <Transactions />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/wallet" 
-          element={
-            <ProtectedRoute>
-              <Wallet />
-            </ProtectedRoute>
-          } 
-        />
+        {/* --- FIXED: Added Routes for Stocks and Stock Details --- */}
+        <Route path="/stocks" element={<Stocks />} />
+        <Route path="/market/:symbol" element={<StockDetails />} />
+        <Route path="/top-gainers" element={<TopGainer isFullPage={true} />} />
+        <Route path="/top-losers" element={<TopLoser isFullPage={true} />} />
 
-        
+        {/* --- Protected Routes --- */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
+        <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+        <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
       </Routes>
     </>
   );
