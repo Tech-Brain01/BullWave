@@ -90,7 +90,7 @@ router.get('/api/market-data', async (req, res) => {
       "NSE_EQ|INE009A01021", // ICICI Bank
     ].join(',');
 
-    const accessToken = "eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI0NkNLTkwiLCJqdGkiOiI2ODgzMWJlNzY5ZTRkYzRhYmEyMzViZDkiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaXNQbHVzUGxhbiI6dHJ1ZSwiaWF0IjoxNzUzNDIyODIzLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3NTM0ODA4MDB9.CCUodbEKxT83xCxTbi9SRw-3GRYJm7MlgupI_kF31sI"; // ❗ Paste your most recent valid token here
+    const accessToken = "eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI0NkNLTkwiLCJqdGkiOiI2ODg0YmNmM2JiZWI1ODQ1YWMzYzc2NzkiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaXNQbHVzUGxhbiI6dHJ1ZSwiaWF0IjoxNzUzNTI5NTg3LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3NTM1NjcyMDB9.PS4GBQCb5q7Guksnp40OerGDjy-qS8U1FxmYXpl86y8";
 
     if (!accessToken || accessToken === "your_valid_upstox_access_token") {
         return res.status(401).json({ success: false, message: "Server is missing a valid Upstox API token." });
@@ -104,17 +104,15 @@ router.get('/api/market-data', async (req, res) => {
         }
     });
 
-    // --- FIX: Correctly map the response object ---
-    const marketData = Object.entries(response.data.data).map(([instrumentKey, stock]) => ({
-      // The 'instrumentKey' (e.g., "NSE_EQ|INE002A01018") is now the unique key
+    // --- FIX: Correctly map the response object with fallback values ---
+     const marketData = Object.entries(response.data.data).map(([instrumentKey, stock]) => ({
       instrumentKey: instrumentKey, 
       symbol: stock.symbol,
       price: stock.last_price,
       change: stock.change,
-      // The API sometimes returns 'change_percentage', sometimes 'net_change'
       changePercent: stock.change_percentage || stock.net_change || 0, 
       // Ensure 'name' exists, fallback to symbol
-      name: stock.name || stock.symbol
+      name: stock.name || stock.symbol // <-- THIS IS THE FIX
     }));
     
     res.status(200).json({ success: true, data: marketData });

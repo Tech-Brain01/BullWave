@@ -6,94 +6,13 @@ import { Badge } from "../ui/Badge";
 import { Card } from "../ui/Card";
 import { TrendingDown, ArrowRight, Star, BarChart3 } from "lucide-react";
 
-const TopLoser = ({ isFullPage = false, showHeader = true }) => {
+const TopLoser = ({ isFullPage = false, showHeader = true , losers = [] }) => {
   const location = useLocation();
   
-  const topLosers = [
-    {
-      symbol: "YESBANK",
-      name: "Yes Bank Limited",
-      price: 18.45,
-      change: -1.67,
-      changePercent: -8.31,
-      volume: "5.2M",
-      marketCap: "0.58L Cr",
-      sector: "Banking"
-    },
-    {
-      symbol: "ZEEL",
-      name: "Zee Entertainment Enterprises",
-      price: 165.23,
-      change: -12.45,
-      changePercent: -7.01,
-      volume: "2.8M",
-      marketCap: "1.58L Cr",
-      sector: "Media & Entertainment"
-    },
-    {
-      symbol: "IDEA",
-      name: "Vodafone Idea Limited",
-      price: 8.75,
-      change: -0.62,
-      changePercent: -6.61,
-      volume: "15.3M",
-      marketCap: "0.25L Cr",
-      sector: "Telecommunications"
-    },
-    {
-      symbol: "SUZLON",
-      name: "Suzlon Energy Limited",
-      price: 42.30,
-      change: -2.85,
-      changePercent: -6.30,
-      volume: "8.9M",
-      marketCap: "0.57L Cr",
-      sector: "Power"
-    },
-    {
-      symbol: "PAYTM",
-      name: "One 97 Communications Limited",
-      price: 567.80,
-      change: -35.90,
-      changePercent: -5.95,
-      volume: "3.4M",
-      marketCap: "3.60L Cr",
-      sector: "Financial Services"
-    },
-    {
-      symbol: "SPICEJET",
-      name: "SpiceJet Limited",
-      price: 45.60,
-      change: -2.67,
-      changePercent: -5.53,
-      volume: "6.7M",
-      marketCap: "0.33L Cr",
-      sector: "Airlines"
-    },
-    {
-      symbol: "GMRINFRA",
-      name: "GMR Infrastructure Limited",
-      price: 67.25,
-      change: -3.78,
-      changePercent: -5.32,
-      volume: "4.8M",
-      marketCap: "1.27L Cr",
-      sector: "Infrastructure"
-    },
-    {
-      symbol: "RPOWER",
-      name: "Reliance Power Limited",
-      price: 23.85,
-      change: -1.25,
-      changePercent: -4.98,
-      volume: "12.5M",
-      marketCap: "0.47L Cr",
-      sector: "Power"
-    }
-  ];
+  
+    const isFullPageView = isFullPage || location.pathname === "/top-losers";
+  const displayedLosers = isFullPageView ? losers : losers.slice(0, 3);
 
-  const isFullPageView = isFullPage || location.pathname === "/top-losers";
-   const displayedLosers = isFullPageView ? topLosers : topLosers.slice(0, 3);
 
 if (!isFullPageView) {
     return (
@@ -116,39 +35,43 @@ if (!isFullPageView) {
         )}
 
         <div className="space-y-4">
-          {displayedLosers.map((stock, index) => (
-            <motion.div
-              key={stock.symbol}
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="flex items-center justify-between p-3 rounded-lg bg-background/50 backdrop-blur-sm hover:bg-background/70 transition-all duration-300"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">
-                    {stock.symbol.slice(0, 2)}
-                  </span>
+          {displayedLosers && displayedLosers.length > 0 ? (
+            displayedLosers.map((stock, index) => (
+              <motion.div
+                key={stock.instrumentKey || stock.symbol}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="flex items-center justify-between p-3 rounded-lg bg-background/50 backdrop-blur-sm hover:bg-background/70 transition-all duration-300"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">
+                      {stock.symbol ? stock.symbol.slice(0, 4) : 'NA'}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-bold">{stock.symbol || 'N/A'}</p>
+                    <p className="text-xs text-muted-foreground truncate max-w-[150px]">
+                      {stock.name || ''}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold">{stock.symbol}</p>
-                  <p className="text-xs text-muted-foreground truncate max-w-[150px]">
-                    {stock.name}
-                  </p>
+                <div className="text-right">
+                  <p className="font-bold">₹{stock.ltp ? stock.ltp.toFixed(2) : '0.00'}</p>
+                  <div className="flex items-center space-x-1 text-red-500">
+                    <TrendingDown className="w-3 h-3" />
+                    <span className="text-sm font-medium">
+                      {stock.changePercent ? stock.changePercent.toFixed(2) : '0.00'}%
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <p className="font-bold">₹{stock.price.toFixed(2)}</p>
-                <div className="flex items-center space-x-1 text-red-500">
-                  <TrendingDown className="w-3 h-3" />
-                  <span className="text-sm font-medium">
-                    {stock.changePercent.toFixed(2)}%
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          ) : (
+            <p className="text-center text-muted-foreground py-4">Awaiting market data...</p>
+          )}
         </div>
       </div>
     );
