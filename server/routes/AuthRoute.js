@@ -15,9 +15,11 @@ router.post('/', userVerification);
 
 // 1. Redirect to Upstox for login
 router.get('/auth/upstox', (req, res) => {
+    console.log("✅ [STEP 1] Redirecting to Upstox login page...");
+    const redirectUri = 'http://localhost:3001/auth/upstox/callback';
     const params = new URLSearchParams({
         client_id: process.env.API_KEY,
-        redirect_uri: 'http://localhost:3001/auth/upstox/callback', // Must match the redirect URI in your Upstox app
+        redirect_uri: redirectUri,
         response_type: 'code',
     });
     res.redirect(`https://api-v2.upstox.com/login/authorization/dialog?${params.toString()}`);
@@ -28,11 +30,15 @@ router.get('/auth/upstox/callback', async (req, res) => {
     const { code } = req.query;
 
     if (!code) {
-        return res.status(400).send('Authorization code is missing');
+        console.error("🔴 [STEP 2 FAILED] Did not receive authorization code from Upstox.");
+        return res.status(400).send('Authorization code is missing. Please try authenticating again.');
     }
 
+    console.log("✅ [STEP 2] Received authorization code from Upstox:", code);
+    console.log("⏳ [STEP 3] Exchanging authorization code for an access token...");
+
     try {
-        const response = await axios.post('https://api-v2.upstox.com/login/authorization/token', new URLSearchParams({
+        const tokenResponse = await axios.post('https://api-v2.upstox.com/login/authorization/token', new URLSearchParams({
             code,
             client_id: process.env.API_KEY,
             client_secret: process.env.API_SECRET,
@@ -41,86 +47,30 @@ router.get('/auth/upstox/callback', async (req, res) => {
         }), {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Api-Version': '2.0'
+                'Api-Version': '2.0',
+                 'accept': 'application/json'
             }
         });
 
-        const { access_token } = response.data;
+        const accessToken = tokenResponse.data.access_token;
+        if (!accessToken) {
+             console.error("🔴 [STEP 3 FAILED] Response received, but no access_token found.");
+             return res.status(500).send("Could not retrieve access token from Upstox.");
+        }
+        console.log("✅ [STEP 3] Successfully received access token!");
 
-        // ❗ **IMPORTANT:** Securely store the access_token in your database
-        // associated with the logged-in user. For now, we'll just log it.
-        console.log('Upstox Access Token:', access_token);
+        // Forward the access token to our main server endpoint to handle it
+        await axios.post(`http://localhost:${process.env.PORT || 3001}/upstox-token`, {
+            access_token: accessToken
+        });
 
         // Redirect to your frontend dashboard
-        res.redirect('http://localhost:3000/dashboard');
+        res.redirect('http://localhost:5173/dashboard');
 
     } catch (error) {
-        console.error('Error getting access token from Upstox:', error.response ? error.response.data : error.message);
-        res.status(500).send('Error getting access token from Upstox');
+        console.error("🔴 [STEP 3 FAILED] Error exchanging code for access token:", error.response ? error.response.data : error.message);
+        res.status(500).send('Error getting access token from Upstox. Check server logs.');
     }
-});
-
-// --- ADD THIS NEW DASHBOARD ROUTE ---
-router.get('/dashboard', userVerification, (req, res) => {
-  // The userVerification middleware has already confirmed the user is logged in.
-  // The user's information is attached to the request object (req.user).
-  
-  // You can fetch real data from your database here.
-  // For now, we'll send back some sample data.
-  res.status(200).json({
-    success: true,
-    message: `Welcome to your dashboard, ${req.user.username}!`,
-    data: {
-      portfolioValue: Math.floor(Math.random() * 100000),
-      totalGain: (Math.random() * 5000 - 1000).toFixed(2),
-      watchlist: ["RELIANCE", "TCS", "HDFCBANK", "INFY"]
-    }
-  });
-});
-
-
-router.get('/api/market-data', async (req, res) => {
-  try {
-    const instruments = [
-      "NSE_INDEX|Nifty 50",
-      "NSE_INDEX|Nifty Bank",
-      "NSE_EQ|INE002A01018", // Reliance
-      "NSE_EQ|INE467B01029", // TCS
-      "NSE_EQ|INE090A01021", // HDFC Bank
-      "NSE_EQ|INE009A01021", // ICICI Bank
-    ].join(',');
-
-    const accessToken = "eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI0NkNLTkwiLCJqdGkiOiI2ODg0YmNmM2JiZWI1ODQ1YWMzYzc2NzkiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaXNQbHVzUGxhbiI6dHJ1ZSwiaWF0IjoxNzUzNTI5NTg3LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3NTM1NjcyMDB9.PS4GBQCb5q7Guksnp40OerGDjy-qS8U1FxmYXpl86y8";
-
-    if (!accessToken || accessToken === "your_valid_upstox_access_token") {
-        return res.status(401).json({ success: false, message: "Server is missing a valid Upstox API token." });
-    }
-
-    const response = await axios.get(`https://api-v2.upstox.com/market-quote/quotes?instrument_key=${instruments}`, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Api-Version': '2.0',
-            'Accept': 'application/json'
-        }
-    });
-
-    // --- FIX: Correctly map the response object with fallback values ---
-     const marketData = Object.entries(response.data.data).map(([instrumentKey, stock]) => ({
-      instrumentKey: instrumentKey, 
-      symbol: stock.symbol,
-      price: stock.last_price,
-      change: stock.change,
-      changePercent: stock.change_percentage || stock.net_change || 0, 
-      // Ensure 'name' exists, fallback to symbol
-      name: stock.name || stock.symbol // <-- THIS IS THE FIX
-    }));
-    
-    res.status(200).json({ success: true, data: marketData });
-
-  } catch (error) {
-    console.error("🔴 Error fetching EOD market data:", error.response ? error.response.data : error.message);
-    res.status(500).json({ success: false, message: "Failed to fetch market data." });
-  }
 });
 
 
