@@ -2,7 +2,7 @@
 
 const { Router } = require('express');
 const axios = require('axios');
-const { signup, login } = require('../controllers/AuthController');
+const { signup, login } = require('../Controllers/AuthController');
 const { userVerification } = require('../Middlewares/AuthMiddleware');
 const router = Router();
 
@@ -13,11 +13,16 @@ router.post('/', userVerification);
 
 // ------------------ UPSTOX AUTHENTICATION ROUTES ------------------
 
+const redirectUri = process.env.NODE_ENV === 'production' 
+  ? 'https://your-backend.onrender.com/auth/upstox/callback'
+  : 'http://localhost:3001/auth/upstox/callback';
+
+
 // 1. Redirect to Upstox for login
 router.get('/auth/upstox', (req, res) => {
     const params = new URLSearchParams({
         client_id: process.env.API_KEY,
-        redirect_uri: 'http://localhost:3001/auth/upstox/callback', // Must match the redirect URI in your Upstox app
+        redirect_uri: redirectUri,
         response_type: 'code',
     });
     res.redirect(`https://api-v2.upstox.com/login/authorization/dialog?${params.toString()}`);

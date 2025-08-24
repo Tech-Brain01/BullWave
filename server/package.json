@@ -29,6 +29,7 @@
     "path": "^0.12.7",
     "protobufjs": "^7.5.3",
     "socket.io": "^4.8.1",
+    "uuid": "^11.1.0",
     "ws": "^8.18.3"
   },
   "devDependencies": {

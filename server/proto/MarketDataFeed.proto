@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package com.upstox.marketdatafeeder.rpc.proto;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+message LTPC {
+    double ltp = 1; // Last Traded Price
+    int64 ltt = 2; // Last Traded Time
+    int64 ltq = 3; // Last Traded Quantity
+    double cp = 4; // Close Price
+}
+
+message MarketLevel {
+    int32 quantity = 1;
+    double price = 2;
+    int32 orders = 3;
+}
+
+message MarketOHLC {
+    string interval = 1;
+    double open = 2;
+    double high = 3;
+    double low = 4;
+    double close = 5;
+    int64 volume = 6;
+    int64 ts = 7;
+}
+
+message Feed {
+    oneof Feeds {
+        LTPC ltpc = 1;
+        MarketLevel ff = 2;
+        MarketOHLC ohlc = 3;
+    }
+}
+
+message FeedResponse {
+    string type = 1;
+    map<string, Feed> feeds = 2;
+}
