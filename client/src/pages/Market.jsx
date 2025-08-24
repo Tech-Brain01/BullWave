@@ -5,7 +5,8 @@ import io from 'socket.io-client';
 import axios from 'axios';
 import Listings from '../components/MarketPage/Listings';
 
-const socket = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
+const socket = io(import.meta.env.VITE_BACKEND_URL, { withCredentials: true });
 
 const Market = () => {
     const [marketData, setMarketData] = useState([]);
@@ -15,7 +16,7 @@ const Market = () => {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const { data } = await axios.get('http://localhost:3001/api/market-data');
+                const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/market-data`);
                 if (data.success) {
                     // This sets up our initial state with all necessary static data
                     setMarketData(data.data);

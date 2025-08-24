@@ -18,7 +18,7 @@ useEffect(() => {
       try {
         // Fetch from the same dashboard endpoint
         const { data } = await axios.get(
-          `http://localhost:3001/dashboard/${user.id}`,
+          `${import.meta.env.VITE_BACKEND_URL}/dashboard/${user.id}`,
           { withCredentials: true }
         );
         setPortfolioData(data.portfolio); // We only need the portfolio part here

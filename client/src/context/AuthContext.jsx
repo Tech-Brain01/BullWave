@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       if (cookies.token) {
         try {
           const { data } = await axios.post(
-            'http://localhost:3001/', 
+            '${import.meta.env.VITE_BACKEND_URL}/', 
             {},
             { withCredentials: true }
           );

@@ -18,7 +18,7 @@ const Dashboard = () => {
 
       try {
         const { data } = await axios.get(
-          `http://localhost:3001/dashboard/${user.id}`, // Use the new endpoint
+          `${import.meta.env.VITE_BACKEND_URL}/dashboard/${user.id}`, // Use the new endpoint
           { withCredentials: true }
         );
         setDashboardData(data);

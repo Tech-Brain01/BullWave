@@ -41,7 +41,7 @@ router.get('/auth/upstox/callback', async (req, res) => {
             code,
             client_id: process.env.API_KEY,
             client_secret: process.env.API_SECRET,
-            redirect_uri: 'http://localhost:3001/auth/upstox/callback',
+            redirect_uri: redirectUri,
             grant_type: 'authorization_code',
         }), {
             headers: {
